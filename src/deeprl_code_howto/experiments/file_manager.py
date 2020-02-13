@@ -1,3 +1,7 @@
+"""
+A centralized way of dealing with saving/loading files
+"""
+
 import os
 import shutil
 import subprocess
@@ -15,6 +19,7 @@ class FileManager(object):
         self._exp_name = exp_name
         self._exp_dir = os.path.join(FileManager.base_dir, self._exp_name)
 
+        # NOTE: This is very important to have. It helps prevent you from accidentally overwriting previous experiments!
         if is_continue:
             assert os.path.exists(self._exp_dir),\
                 'Experiment folder "{0}" does not exists, but continue = True'.format(self._exp_name)
@@ -22,8 +27,10 @@ class FileManager(object):
             assert not os.path.exists(self._exp_dir),\
                 'Experiment folder "{0}" exists, but continue = False'.format(self._exp_name)
 
+        # NOTE: This is very important to have. If you save the current git commit and diff, you can always reproduce.
         self._save_git()
 
+        # NOTE: This is very important to have. It lets you quickly examine the configuration of old experiments.
         if config_fname is not None:
             shutil.copy(config_fname, os.path.join(self.exp_dir, 'config.py'))
 
@@ -60,3 +67,5 @@ class FileManager(object):
         models_dir = os.path.join(self.exp_dir, 'models')
         os.makedirs(models_dir, exist_ok=True)
         return models_dir
+
+    # TODO: add more as appropriate
